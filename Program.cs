@@ -1,52 +1,113 @@
 ﻿using System;
 
-namespace SphereVolumeCalculator
+namespace LabWork
 {
-    // Батьківський клас "Геометрична фігура"
-    class GeometricShape
+    // Батьківський клас "Вектор"
+    class Vector
     {
-        // Віртуальний метод для введення даних
-        public virtual void SetData()
+        protected int[] elements; // Масив для збереження елементів вектора
+        protected int size; // Розмір вектора
+
+        public Vector(int size)
         {
-            Console.WriteLine("Батьківський клас: SetData");
+            this.size = size;
+            elements = new int[size];
         }
 
-        // Віртуальний метод для обчислення об’єму
-        public virtual double CalculateVolume()
+        // Віртуальний метод для задання елементів
+        public virtual void SetElements()
         {
-            Console.WriteLine("Батьківський клас: CalculateVolume");
-            return 0;
+            Console.WriteLine("Введіть елементи вектора:");
+            for (int i = 0; i < size; i++)
+            {
+                Console.Write($"Елемент {i + 1}: ");
+                elements[i] = int.Parse(Console.ReadLine());
+            }
         }
 
-        // Метод для відображення результату
-        public virtual void DisplayVolume()
+        // Віртуальний метод для виведення елементів
+        public virtual void Display()
         {
-            Console.WriteLine("Об’єм: " + CalculateVolume());
+            Console.WriteLine("Елементи вектора:");
+            for (int i = 0; i < size; i++)
+            {
+                Console.Write(elements[i] + " ");
+            }
+            Console.WriteLine();
+        }
+
+        // Віртуальний метод для пошуку максимального елемента
+        public virtual int FindMax()
+        {
+            int max = elements[0];
+            for (int i = 1; i < size; i++)
+            {
+                if (elements[i] > max)
+                {
+                    max = elements[i];
+                }
+            }
+            return max;
         }
     }
 
-    // Похідний клас "Куля"
-    class Sphere : GeometricShape
+    // Похідний клас "Матриця"
+    class Matrix : Vector
     {
-        private double radius;
+        private int[,] matrixElements; // Масив для збереження елементів матриці
+        private int rows; // Кількість рядків
+        private int cols; // Кількість стовпців
 
-        // Перевантажений метод для введення даних
-        public override void SetData()
+        public Matrix(int rows, int cols) : base(rows * cols)
         {
-            Console.Write("Введіть радіус кулі: ");
-            radius = double.Parse(Console.ReadLine());
+            this.rows = rows;
+            this.cols = cols;
+            matrixElements = new int[rows, cols];
         }
 
-        // Перевантажений метод для обчислення об’єму кулі
-        public override double CalculateVolume()
+        // Перевантажений метод для задання елементів матриці
+        public override void SetElements()
         {
-            return (4.0 / 3) * Math.PI * Math.Pow(radius, 3);
+            Console.WriteLine("Введіть елементи матриці:");
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    Console.Write($"Елемент ({i + 1}, {j + 1}): ");
+                    matrixElements[i, j] = int.Parse(Console.ReadLine());
+                }
+            }
         }
 
-        // Перевантажений метод для відображення результату
-        public override void DisplayVolume()
+        // Перевантажений метод для виведення матриці
+        public override void Display()
         {
-            Console.WriteLine($"Об’єм кулі з радіусом {radius} дорівнює: {CalculateVolume():F2}");
+            Console.WriteLine("Елементи матриці:");
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    Console.Write(matrixElements[i, j] + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        // Перевантажений метод для пошуку максимального елемента матриці
+        public override int FindMax()
+        {
+            int max = matrixElements[0, 0];
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (matrixElements[i, j] > max)
+                    {
+                        max = matrixElements[i, j];
+                    }
+                }
+            }
+            return max;
         }
     }
 
@@ -55,16 +116,27 @@ namespace SphereVolumeCalculator
     {
         static void Main(string[] args)
         {
-            // Динамічне створення об’єкта
-            GeometricShape shape;
+            // Змінна для динамічного створення об'єкта
+            Vector vectorOrMatrix;
 
-            Console.WriteLine("Обчислення об’єму геометричної фігури.");
-            Console.WriteLine("Виберіть тип фігури: 1 - Куля");
+            // Задаємо тип об'єкта на основі вибору користувача
+            Console.WriteLine("Виберіть тип об'єкта: 1 - Вектор, 2 - Матриця");
             int choice = int.Parse(Console.ReadLine());
-
             if (choice == 1)
             {
-                shape = new Sphere();
+                // Динамічно створюємо об'єкт класу Vector
+                Console.Write("Введіть розмір вектора: ");
+                int size = int.Parse(Console.ReadLine());
+                vectorOrMatrix = new Vector(size);
+            }
+            else if (choice == 2)
+            {
+                // Динамічно створюємо об'єкт класу Matrix
+                Console.Write("Введіть кількість рядків матриці: ");
+                int rows = int.Parse(Console.ReadLine());
+                Console.Write("Введіть кількість стовпців матриці: ");
+                int cols = int.Parse(Console.ReadLine());
+                vectorOrMatrix = new Matrix(rows, cols);
             }
             else
             {
@@ -72,9 +144,10 @@ namespace SphereVolumeCalculator
                 return;
             }
 
-            // Використання віртуальних методів
-            shape.SetData();
-            shape.DisplayVolume();
+            // Викликаємо віртуальні методи
+            vectorOrMatrix.SetElements();
+            vectorOrMatrix.Display();
+            Console.WriteLine($"Максимальний елемент: {vectorOrMatrix.FindMax()}");
         }
     }
 }
